@@ -76,10 +76,11 @@ export default class Container extends React.Component<ContainerProps, Container
     this.loadCat();
   }
 
-  async componentDidUpdate({}, prevState: ContainerState) {
+  componentDidUpdate({}, prevState: ContainerState) {
     if (prevState.breedID !== this.state.breedID || prevState.categoryID !== this.state.categoryID) {
-      this.setState({ cats: [] });
-      this.loadCat();
+      this.setState({ cats: [], hasNext: true }, () => {
+        this.loadCat();
+      });
     }
   }
 
