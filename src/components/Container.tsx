@@ -8,6 +8,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 
 export interface ContainerProps {
   type: Type;
@@ -19,6 +20,7 @@ export interface ContainerState {
   breedID: any;
   menuItem: MenuInput[];
   page: number;
+  hasNext: boolean;
 }
 
 export interface Cat {
@@ -40,7 +42,8 @@ export default class Container extends React.Component<ContainerProps, Container
       categoryID: null,
       breedID: null,
       menuItem: [],
-      page: 1
+      page: 1,
+      hasNext: true
     };
     this.loadCat = this.loadCat.bind(this);
     this.onChangeHandler = this.onChangeHandler.bind(this);
@@ -73,12 +76,24 @@ export default class Container extends React.Component<ContainerProps, Container
     this.loadCat();
   }
 
+  async componentDidUpdate({}, prevState: ContainerState) {
+    if (prevState.breedID !== this.state.breedID || prevState.categoryID !== this.state.categoryID) {
+      this.setState({ cats: [] });
+      this.loadCat();
+    }
+  }
+
   async loadCat() {
-    const { page, breedID, categoryID } = this.state;
+    const { page, breedID, categoryID, hasNext } = this.state;
+    if (!hasNext) {
+      return;
+    }
     try {
       const result = await getCats(page, breedID, categoryID);
-      console.log(result);
       const cats = this.state.cats;
+      if (result.data.length < 20) {
+        this.setState({ hasNext: false });
+      }
 
       for (let i = 0; i < result.data.length; i += 1) {
         cats.push({ id: result.data[i].id, url: result.data[i].url });
@@ -99,7 +114,7 @@ export default class Container extends React.Component<ContainerProps, Container
   }
 
   render() {
-    const { cats, categoryID, breedID, menuItem } = this.state;
+    const { cats, categoryID, breedID, menuItem, hasNext } = this.state;
     const { type } = this.props;
     const catElement = cats.map((cat, index) => {
       return <img className="Cat__Item" key={`${index}/${type}`} src={cat.url} />;
@@ -112,31 +127,42 @@ export default class Container extends React.Component<ContainerProps, Container
       );
     });
 
+    let formElement: JSX.Element;
+    if (type === Type.Breed || type === Type.Category) {
+      formElement = (
+        <FormControl>
+          <Select
+            value={type === Type.Breed ? breedID : categoryID}
+            onChange={this.onChangeHandler}
+            inputProps={{
+              name: "age",
+              id: "age-simple"
+            }}
+          >
+            {menuElement}
+          </Select>
+        </FormControl>
+      );
+    } else {
+      formElement = (
+        <Typography variant="h6" color="default">
+          Random
+        </Typography>
+      );
+    }
+
     return (
       <div className="Container">
         <AppBar position="absolute" color="default">
-          <Toolbar>
-            {type === Type.Breed || type === Type.Category ? (
-              <FormControl>
-                <Select
-                  value={type === Type.Breed ? breedID : categoryID}
-                  onChange={this.onChangeHandler}
-                  inputProps={{
-                    name: "age",
-                    id: "age-simple"
-                  }}
-                >
-                  {menuElement}
-                </Select>
-              </FormControl>
-            ) : null}
-          </Toolbar>
+          <Toolbar>{formElement}</Toolbar>
         </AppBar>
         <div className="Cat">
           {catElement}
-          <Button variant="contained" color="primary" onClick={this.loadCat}>
-            More...
-          </Button>
+          {hasNext ? (
+            <Button variant="contained" color="primary" onClick={this.loadCat}>
+              More...
+            </Button>
+          ) : null}
         </div>
       </div>
     );
