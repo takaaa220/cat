@@ -2,7 +2,7 @@ import axios from "axios";
 
 const myHttpClient = axios.create({
   baseURL: "https://api.thecatapi.com/v1",
-  timeout: 1000,
+  timeout: 3000,
   headers: { "x-api-key": process.env.APIKEY }
 });
 
@@ -14,11 +14,11 @@ export const getCategories = () => {
   return myHttpClient.get("/categories");
 };
 
-export const getCats = (breedID = "", categoryID = "", limit = 20, page = 1) => {
+export const getCats = (page: any, breedID: string | null, categoryID: number | null) => {
   return myHttpClient.get("/images/search", {
     params: {
       page,
-      limit,
+      limit: 20,
       category_ids: categoryID || null,
       breed_id: breedID || null
     }

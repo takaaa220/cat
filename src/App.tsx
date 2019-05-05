@@ -6,6 +6,12 @@ export interface AppProps {}
 
 export interface AppState {}
 
+export enum Type {
+  None,
+  Breed,
+  Category
+}
+
 class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
@@ -13,8 +19,12 @@ class App extends React.Component<AppProps, AppState> {
 
   render() {
     return (
-      <div>
-        <Container />
+      <div className="App">
+        <div className="Containers">
+          <Container type={Type.None} />
+          <Container type={Type.Breed} />
+          <Container type={Type.Category} />
+        </div>
       </div>
     );
   }

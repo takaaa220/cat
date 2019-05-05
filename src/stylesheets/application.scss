@@ -1,1 +1,27 @@
 @charset "UTF-8";
+
+.App {
+}
+
+.Containers {
+  display: flex;
+  height: 100vh;
+}
+
+.Container {
+  height: 100%;
+  position: relative;
+  width: calc(100% / 3);
+}
+
+.Cat {
+  height: 100%;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+.Cat__Item {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
