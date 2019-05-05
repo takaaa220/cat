@@ -2,6 +2,7 @@ const path = require("path"); // 絶対パスに変換するために
 const htmlWebpackPlugin = require("html-webpack-plugin"); // index.htmlをビルドチェインの中で作っちゃう
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const PrettierPlugin = require("prettier-webpack-plugin");
+require("dotenv").config();
 
 module.exports = {
   mode: "development",
