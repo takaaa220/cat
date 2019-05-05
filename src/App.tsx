@@ -4,7 +4,9 @@ import Container from "./components/Container";
 
 export interface AppProps {}
 
-export interface AppState {}
+export interface AppState {
+  isShow: boolean;
+}
 
 export enum Type {
   None,
@@ -15,13 +17,16 @@ export enum Type {
 class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
+    this.state = {
+      isShow: window.matchMedia("(min-width: 700px)").matches
+    };
   }
 
   render() {
     return (
       <div className="App">
         <div className="Containers">
-          <Container type={Type.None} />
+          {this.state.isShow ? <Container type={Type.None} /> : null}
           <Container type={Type.Breed} />
           <Container type={Type.Category} />
         </div>
